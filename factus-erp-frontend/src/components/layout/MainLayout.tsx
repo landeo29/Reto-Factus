@@ -50,7 +50,7 @@ export default function MainLayout() {
                 </header>
 
                 <main className="flex-1 p-8 overflow-auto">
-                    <div className="max-w-7xl animate-fade-up">
+                    <div className="animate-fade-up">
                         <Outlet />
                     </div>
                 </main>

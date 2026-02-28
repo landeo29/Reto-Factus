@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import MainLayout from './components/layout/MainLayout';
 import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
+import ClientesPage from './pages/clientes/ClientesPage';
 
 function App() {
     return (
@@ -14,6 +15,7 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<DashboardPage />} />
+                        <Route path="/clientes" element={<ClientesPage />} />
                     </Route>
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
