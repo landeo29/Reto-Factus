@@ -49,4 +49,9 @@ public class Proveedor {
 
     @UpdateTimestamp
     private LocalDateTime actualizadoEn;
+
+    @PrePersist
+    public void prePersist() {
+        if (activo == null) activo = true;
+    }
 }
