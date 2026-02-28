@@ -1,0 +1,30 @@
+server:
+  port: 8080
+
+factus:
+  api:
+    base-url: https://api-sandbox.factus.com.co
+    token-url: https://api-sandbox.factus.com.co/oauth/token
+    username: sandbox@factus.com.co
+    password: sandbox2024%
+    client-id: a12aa47c-0672-4b32-ab5b-2b15b79a65ef
+    client-secret: AaeWWMFjm97uDo3MMZYEaxFzvWAHs9PLy9Ztyc0d
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/factus_erp
+    username: erp_admin
+    password: retofactus123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+jwt:
+  secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+  expiration: 86400000
