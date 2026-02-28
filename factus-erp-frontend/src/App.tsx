@@ -6,7 +6,8 @@ import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import ClientesPage from './pages/clientes/ClientesPage';
 import ProveedoresPage from './pages/proveedores/ProveedoresPage';
-
+import CategoriasPage from './pages/categorias/CategoriasPage';
+import ProductosPage from './pages/productos/ProductosPage';
 
 function App() {
     return (
@@ -19,7 +20,8 @@ function App() {
                         <Route path="/" element={<DashboardPage />} />
                         <Route path="/clientes" element={<ClientesPage />} />
                         <Route path="/proveedores" element={<ProveedoresPage />} />
-
+                        <Route path="/categorias" element={<CategoriasPage />} />
+                        <Route path="/productos" element={<ProductosPage />} />
                     </Route>
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
