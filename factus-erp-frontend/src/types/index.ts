@@ -93,7 +93,9 @@ export interface Venta {
     total: number;
     estado: string;
     cufe: string;
+    factusQrUrl: string;
     detalles: VentaDetalle[];
+    notas: string;
     creadoEn: string;
 }
 
