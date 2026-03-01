@@ -2,9 +2,12 @@ package com.factus.factus_system.infrastructure.service.erp;
 
 import com.factus.factus_system.core.entity.Compra;
 import com.factus.factus_system.core.entity.CompraDetalle;
+import com.factus.factus_system.core.entity.Usuario;
 import com.factus.factus_system.core.repository.CompraRepository;
+import com.factus.factus_system.core.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ public class CompraService {
 
     private final CompraRepository compraRepository;
     private final ProductoService productoService;
+    private final UsuarioRepository usuarioRepository;
 
     public List<Compra> listarTodas() {
         return compraRepository.findAll();
@@ -43,6 +47,12 @@ public class CompraService {
 
     @Transactional
     public Compra crear(Compra compra) {
+        // Asignar usuario desde JWT
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        compra.setUsuario(usuario);
+
         Long count = compraRepository.count() + 1;
         compra.setNumeroCompra("CMP-" + String.format("%06d", count));
 
@@ -86,6 +96,13 @@ public class CompraService {
             productoService.actualizarStock(detalle.getProducto().getId(), -detalle.getCantidad());
         }
 
+        return compraRepository.save(compra);
+    }
+
+    @Transactional
+    public Compra marcarComoRecibida(Long id) {
+        Compra compra = buscarPorId(id);
+        compra.setEstado("RECIBIDA");
         return compraRepository.save(compra);
     }
 }

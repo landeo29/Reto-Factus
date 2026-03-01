@@ -45,4 +45,10 @@ public class CompraController {
     public ResponseEntity<ApiResponseDTO<Compra>> anular(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponseDTO.ok("Compra anulada", compraService.anular(id)));
     }
+
+    @PutMapping("/{id}/recibir")
+    public ResponseEntity<ApiResponseDTO<Compra>> recibir(@PathVariable Long id) {
+        Compra compra = compraService.marcarComoRecibida(id);
+        return ResponseEntity.ok(ApiResponseDTO.ok("Compra recibida", compra));
+    }
 }
