@@ -9,6 +9,7 @@ import ProveedoresPage from './pages/proveedores/ProveedoresPage';
 import CategoriasPage from './pages/categorias/CategoriasPage';
 import ProductosPage from './pages/productos/ProductosPage';
 import VentasPage from './pages/ventas/VentasPage';
+import ComprasPage from './pages/compras/ComprasPage';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                         <Route path="/categorias" element={<CategoriasPage />} />
                         <Route path="/productos" element={<ProductosPage />} />
                         <Route path="/ventas" element={<VentasPage />} />
+                        <Route path="/compras" element={<ComprasPage />} />
 
                     </Route>
                     <Route path="*" element={<Navigate to="/" />} />

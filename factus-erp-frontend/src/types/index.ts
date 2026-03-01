@@ -111,3 +111,29 @@ export interface LoginResponse {
     nombreCompleto: string;
     rol: string;
 }
+
+export interface CompraDetalle {
+    id?: number;
+    producto: Producto;
+    cantidad: number;
+    costoUnitario: number;
+    tasaImpuesto: number;
+    subtotal: number;
+    montoImpuesto: number;
+    total: number;
+}
+
+export interface Compra {
+    id: number;
+    numeroCompra: string;
+    numeroFacturaProveedor: string;
+    proveedor: Proveedor;
+    usuario: Usuario;
+    subtotal: number;
+    totalImpuestos: number;
+    total: number;
+    estado: string;
+    detalles: CompraDetalle[];
+    notas: string;
+    creadoEn: string;
+}
