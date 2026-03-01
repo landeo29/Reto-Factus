@@ -1,24 +1,25 @@
 package com.factus.factus_system.infrastructure.service.erp;
 
+import com.factus.factus_system.core.entity.Usuario;
 import com.factus.factus_system.core.entity.Venta;
 import com.factus.factus_system.core.entity.VentaDetalle;
+import com.factus.factus_system.core.repository.UsuarioRepository;
 import com.factus.factus_system.core.repository.VentaRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class VentaService {
 
     private final VentaRepository ventaRepository;
     private final ProductoService productoService;
+    private final UsuarioRepository usuarioRepository;
 
     public List<Venta> listarTodas() {
         return ventaRepository.findAll();
@@ -31,7 +32,7 @@ public class VentaService {
 
     public Venta buscarPorNumeroVenta(String numero) {
         return ventaRepository.findByNumeroVenta(numero)
-                .orElseThrow(() -> new RuntimeException("Venta no encontrada: " + numero));
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
     }
 
     public List<Venta> buscarPorEstado(String estado) {
@@ -42,17 +43,16 @@ public class VentaService {
         return ventaRepository.findByClienteId(clienteId);
     }
 
-    public List<Venta> buscarPorFechas(LocalDateTime desde, LocalDateTime hasta) {
-        return ventaRepository.findByCreadoEnBetween(desde, hasta);
-    }
-
     @Transactional
     public Venta crear(Venta venta) {
-        // Generar número de venta
         Long count = ventaRepository.count() + 1;
         venta.setNumeroVenta("VTA-" + String.format("%06d", count));
 
-        // Calcular totales
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        venta.setUsuario(usuario);
+
         BigDecimal subtotal = BigDecimal.ZERO;
         BigDecimal totalImpuestos = BigDecimal.ZERO;
         BigDecimal totalDescuentos = BigDecimal.ZERO;
@@ -81,7 +81,6 @@ public class VentaService {
             totalImpuestos = totalImpuestos.add(impuesto);
             totalDescuentos = totalDescuentos.add(descuento);
 
-            // Descontar stock
             productoService.actualizarStock(detalle.getProducto().getId(), -detalle.getCantidad());
         }
 
@@ -94,12 +93,12 @@ public class VentaService {
     }
 
     @Transactional
-    public Venta marcarComoFacturada(Long id, String numeroFactura, String cufe, String qrUrl) {
+    public Venta marcarComoFacturada(Long id, String numeroFactura, String cufe, String factusQrUrl) {
         Venta venta = buscarPorId(id);
         venta.setEstado("FACTURADA");
         venta.setNumeroFactura(numeroFactura);
         venta.setCufe(cufe);
-        venta.setFactusQrUrl(qrUrl);
+        venta.setFactusQrUrl(factusQrUrl);
         return ventaRepository.save(venta);
     }
 
@@ -108,7 +107,6 @@ public class VentaService {
         Venta venta = buscarPorId(id);
         venta.setEstado("ANULADA");
 
-        // Devolver stock
         for (VentaDetalle detalle : venta.getDetalles()) {
             productoService.actualizarStock(detalle.getProducto().getId(), detalle.getCantidad());
         }

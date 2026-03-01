@@ -1,5 +1,6 @@
 package com.factus.factus_system.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -50,8 +51,8 @@ public class Compra {
     private String estado = "PENDIENTE"; // PENDIENTE, RECIBIDA, ANULADA
 
     @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<CompraDetalle> detalles = new ArrayList<>();
+    @JsonManagedReference
+    private List<CompraDetalle> detalles;
 
     @Column(length = 500)
     private String notas;
@@ -65,5 +66,13 @@ public class Compra {
     public void agregarDetalle(CompraDetalle detalle) {
         detalles.add(detalle);
         detalle.setCompra(this);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (estado == null) estado = "PENDIENTE";
+        if (subtotal == null) subtotal = BigDecimal.ZERO;
+        if (totalImpuestos == null) totalImpuestos = BigDecimal.ZERO;
+        if (total == null) total = BigDecimal.ZERO;
     }
 }

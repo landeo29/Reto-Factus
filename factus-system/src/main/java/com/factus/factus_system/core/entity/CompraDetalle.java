@@ -1,5 +1,6 @@
 package com.factus.factus_system.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,8 @@ public class CompraDetalle {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "compra_id", nullable = false)
+    @JoinColumn(name = "compra_id")
+    @JsonBackReference
     private Compra compra;
 
     @ManyToOne(fetch = FetchType.LAZY)

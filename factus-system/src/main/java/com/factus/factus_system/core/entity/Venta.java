@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -75,8 +76,8 @@ public class Venta {
     private String rangoNumeracionId;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<VentaDetalle> detalles = new ArrayList<>();
+    @JsonManagedReference
+    private List<VentaDetalle> detalles;
 
     @Column(length = 500)
     private String notas;
@@ -90,5 +91,14 @@ public class Venta {
     public void agregarDetalle(VentaDetalle detalle) {
         detalles.add(detalle);
         detalle.setVenta(this);
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (estado == null) estado = "PENDIENTE";
+        if (subtotal == null) subtotal = BigDecimal.ZERO;
+        if (totalImpuestos == null) totalImpuestos = BigDecimal.ZERO;
+        if (totalDescuentos == null) totalDescuentos = BigDecimal.ZERO;
+        if (total == null) total = BigDecimal.ZERO;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/erp/ventas")
@@ -45,4 +46,19 @@ public class VentaController {
     public ResponseEntity<ApiResponseDTO<Venta>> anular(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponseDTO.ok("Venta anulada", ventaService.anular(id)));
     }
+
+    @PutMapping("/{id}/facturar")
+    public ResponseEntity<ApiResponseDTO<Venta>> facturar(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> datos) {
+
+        Venta venta = ventaService.marcarComoFacturada(
+                id,
+                datos.get("numeroFactura"),
+                datos.get("cufe"),
+                datos.get("factusQrUrl")
+        );
+        return ResponseEntity.ok(ApiResponseDTO.ok("Venta facturada", venta));
+    }
+
 }

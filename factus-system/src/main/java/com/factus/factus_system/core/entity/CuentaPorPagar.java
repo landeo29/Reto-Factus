@@ -44,4 +44,10 @@ public class CuentaPorPagar {
 
     @CreationTimestamp
     private LocalDateTime creadoEn;
+
+    @PrePersist
+    public void prePersist() {
+        if (estado == null) estado = "PENDIENTE";
+        if (montoPagado == null) montoPagado = BigDecimal.ZERO;
+    }
 }
