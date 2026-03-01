@@ -142,7 +142,7 @@ export default function VentasPage() {
                 observation: venta.notas || '',
                 paymentMethodCode: venta.codigoMetodoPago,
                 customer: {
-                    identificationDocumentId: cliente.tipoIdentificacion === 'NIT' ? '6' : '3',
+                    identificationDocumentId: { CC: '3', NIT: '6', CE: '5', PP: '7', TI: '2' }[cliente.tipoIdentificacion] || '3',
                     identification: cliente.numeroIdentificacion,
                     dv: cliente.dv || '',
                     names: cliente.nombres,
@@ -150,7 +150,7 @@ export default function VentasPage() {
                     phone: cliente.telefono || '0000000',
                     address: cliente.direccion || 'Sin dirección',
                     legalOrganizationId: cliente.organizacionLegalId || '2',
-                    tributeId: cliente.tributoId || '18',
+                    tributeId: cliente.tributoId || '21',
                     municipalityId: cliente.municipioId || '149',
                 },
                 items: venta.detalles.map((d) => ({

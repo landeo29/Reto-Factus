@@ -39,7 +39,7 @@ export default function ClientesPage() {
         email: '',
         telefono: '',
         organizacionLegalId: '2',
-        tributoId: 'ZA',
+        tributoId: '21',
         municipioId: '149',
     });
 
@@ -91,7 +91,7 @@ export default function ClientesPage() {
             email: cliente.email || '',
             telefono: cliente.telefono || '',
             organizacionLegalId: cliente.organizacionLegalId || '2',
-            tributoId: cliente.tributoId || 'ZA',
+            tributoId: cliente.tributoId || '21',
             municipioId: cliente.municipioId || '149',
         });
         setShowModal(true);
@@ -99,7 +99,7 @@ export default function ClientesPage() {
 
     const openCreate = () => {
         setEditing(null);
-        setForm({ tipoIdentificacion: 'CC', numeroIdentificacion: '', dv: '', nombres: '', direccion: '', email: '', telefono: '', organizacionLegalId: '2', tributoId: 'ZA', municipioId: '149' });
+        setForm({ tipoIdentificacion: 'CC', numeroIdentificacion: '', dv: '', nombres: '', direccion: '', email: '', telefono: '', organizacionLegalId: '2', tributoId: '21', municipioId: '149' });
         setShowModal(true);
     };
 
@@ -262,9 +262,8 @@ export default function ClientesPage() {
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">Tributo</label>
                                     <select value={form.tributoId} onChange={e => setForm({...form, tributoId: e.target.value})} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all">
-                                        <option value="01">IVA</option>
-                                        <option value="04">INC</option>
-                                        <option value="ZA">No Aplica</option>
+                                        <option value="18">IVA</option>
+                                        <option value="21">No aplica</option>
                                     </select>
                                 </div>
                             </div>
