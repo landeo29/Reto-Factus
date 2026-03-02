@@ -75,6 +75,10 @@ public class Venta {
     @Column(length = 10)
     private String rangoNumeracionId;
 
+    @Column(length = 10)
+    @Builder.Default
+    private String formaPago = "1";
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<VentaDetalle> detalles;
@@ -100,5 +104,6 @@ public class Venta {
         if (totalImpuestos == null) totalImpuestos = BigDecimal.ZERO;
         if (totalDescuentos == null) totalDescuentos = BigDecimal.ZERO;
         if (total == null) total = BigDecimal.ZERO;
+        if (formaPago == null) formaPago = "1";
     }
 }

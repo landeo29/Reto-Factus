@@ -64,26 +64,27 @@ public class InvoiceServiceImpl implements IInvoiceService {
     }
 
     @Override
-    public byte[] downloadPdf(String number) {
+    public Map<String, Object> downloadPdf(String number) {
         log.info("Descargando PDF factura: {}", number);
 
         return webClient.get()
                 .uri("/v1/bills/download-pdf/{number}", number)
                 .header("Authorization", "Bearer " + authService.getAccessToken())
                 .retrieve()
-                .bodyToMono(byte[].class)
+                .bodyToMono(Map.class)
                 .block();
     }
 
+
     @Override
-    public byte[] downloadXml(String number) {
+    public Map<String, Object> downloadXml(String number) {
         log.info("Descargando XML factura: {}", number);
 
         return webClient.get()
                 .uri("/v1/bills/download-xml/{number}", number)
                 .header("Authorization", "Bearer " + authService.getAccessToken())
                 .retrieve()
-                .bodyToMono(byte[].class)
+                .bodyToMono(Map.class)
                 .block();
     }
 

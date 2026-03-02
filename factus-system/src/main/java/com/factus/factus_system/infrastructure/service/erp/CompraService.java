@@ -10,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.factus.factus_system.core.entity.CuentaPorPagar;
+import com.factus.factus_system.core.repository.CuentaPorPagarRepository;
+import java.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +26,7 @@ public class CompraService {
     private final CompraRepository compraRepository;
     private final ProductoService productoService;
     private final UsuarioRepository usuarioRepository;
+    private final CuentaPorPagarRepository cuentaPorPagarRepository;
 
     public List<Compra> listarTodas() {
         return compraRepository.findAll();
@@ -44,7 +48,6 @@ public class CompraService {
     public List<Compra> buscarPorFechas(LocalDateTime desde, LocalDateTime hasta) {
         return compraRepository.findByCreadoEnBetween(desde, hasta);
     }
-
     @Transactional
     public Compra crear(Compra compra) {
         // Asignar usuario desde JWT
@@ -84,9 +87,22 @@ public class CompraService {
         compra.setTotalImpuestos(totalImpuestos);
         compra.setTotal(subtotal.add(totalImpuestos));
 
-        return compraRepository.save(compra);
-    }
+        Compra compraGuardada = compraRepository.save(compra);
 
+        if ("2".equals(compraGuardada.getFormaPago())) {
+            CuentaPorPagar cuenta = new CuentaPorPagar();
+            cuenta.setCompra(compraGuardada);
+            cuenta.setProveedor(compraGuardada.getProveedor());
+            cuenta.setMonto(compraGuardada.getTotal());
+            cuenta.setMontoPagado(BigDecimal.ZERO);
+            cuenta.setSaldo(compraGuardada.getTotal());
+            cuenta.setFechaVencimiento(LocalDate.now().plusDays(30));
+            cuenta.setEstado("PENDIENTE");
+            cuentaPorPagarRepository.save(cuenta);
+        }
+
+        return compraGuardada;
+    }
     @Transactional
     public Compra anular(Long id) {
         Compra compra = buscarPorId(id);

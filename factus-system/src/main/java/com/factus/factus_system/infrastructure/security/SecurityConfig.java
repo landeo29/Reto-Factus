@@ -1,5 +1,5 @@
 package com.factus.factus_system.infrastructure.security;
-
+import org.springframework.http.HttpMethod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +37,34 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/erp/auth/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        .requestMatchers("/api/erp/usuarios/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/erp/clientes/**").hasAnyRole("ADMIN", "VENDEDOR", "CONTADOR")
+                        .requestMatchers("/api/erp/clientes/**").hasAnyRole("ADMIN", "VENDEDOR")
+
+                        .requestMatchers(HttpMethod.GET, "/api/erp/proveedores/**").hasAnyRole("ADMIN", "CONTADOR", "ALMACENERO")
+                        .requestMatchers("/api/erp/proveedores/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/erp/categorias/**").hasAnyRole("ADMIN", "VENDEDOR", "ALMACENERO")
+                        .requestMatchers("/api/erp/categorias/**").hasAnyRole("ADMIN", "ALMACENERO")
+
+                        .requestMatchers(HttpMethod.GET, "/api/erp/productos/**").hasAnyRole("ADMIN", "VENDEDOR", "ALMACENERO")
+                        .requestMatchers("/api/erp/productos/**").hasAnyRole("ADMIN", "ALMACENERO")
+
+                        .requestMatchers(HttpMethod.GET, "/api/erp/ventas/**").hasAnyRole("ADMIN", "VENDEDOR", "CONTADOR")
+                        .requestMatchers("/api/erp/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
+
+                        .requestMatchers(HttpMethod.GET, "/api/erp/compras/**").hasAnyRole("ADMIN", "CONTADOR", "ALMACENERO")
+                        .requestMatchers("/api/erp/compras/**").hasAnyRole("ADMIN", "ALMACENERO")
+
+                        .requestMatchers("/api/erp/cuentas-cobrar/**").hasAnyRole("ADMIN", "CONTADOR")
+                        .requestMatchers("/api/erp/cuentas-pagar/**").hasAnyRole("ADMIN", "CONTADOR")
+
+                        .requestMatchers("/api/erp/reportes/**").hasAnyRole("ADMIN", "VENDEDOR", "CONTADOR", "ALMACENERO")
+
+                        .requestMatchers("/api/invoices/**").hasAnyRole("ADMIN", "VENDEDOR", "CONTADOR")
+
                         .requestMatchers("/api/erp/**").authenticated()
                         .anyRequest().permitAll()
                 )

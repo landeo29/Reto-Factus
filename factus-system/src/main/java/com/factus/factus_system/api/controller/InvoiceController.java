@@ -50,23 +50,15 @@ public class InvoiceController {
     }
 
     @GetMapping("/{number}/pdf")
-    public ResponseEntity<byte[]> downloadPdf(@PathVariable String number) {
-
-        byte[] pdf = invoiceService.downloadPdf(number);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=factura-" + number + ".pdf")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdf);
+    public ResponseEntity<ApiResponseDTO<Map<String, Object>>> downloadPdf(@PathVariable String number) {
+        Map<String, Object> result = invoiceService.downloadPdf(number);
+        return ResponseEntity.ok(ApiResponseDTO.ok("PDF obtenido", result));
     }
 
     @GetMapping("/{number}/xml")
-    public ResponseEntity<byte[]> downloadXml(@PathVariable String number) {
-
-        byte[] xml = invoiceService.downloadXml(number);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=factura-" + number + ".xml")
-                .contentType(MediaType.APPLICATION_XML)
-                .body(xml);
+    public ResponseEntity<ApiResponseDTO<Map<String, Object>>> downloadXml(@PathVariable String number) {
+        Map<String, Object> result = invoiceService.downloadXml(number);
+        return ResponseEntity.ok(ApiResponseDTO.ok("XML obtenido", result));
     }
 
     @GetMapping("/{number}/email-content")

@@ -28,4 +28,6 @@ public class InvoiceRequestDTO {
     @Valid
     @NotNull(message = "Los items son obligatorios")
     private List<ItemDTO> items;
+
+    private PaymentFormDTO paymentForm;
 }

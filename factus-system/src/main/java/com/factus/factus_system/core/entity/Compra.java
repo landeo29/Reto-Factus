@@ -57,6 +57,10 @@ public class Compra {
     @Column(length = 500)
     private String notas;
 
+    @Column(length = 10)
+    @Builder.Default
+    private String formaPago = "1";
+
     @CreationTimestamp
     private LocalDateTime creadoEn;
 
@@ -74,5 +78,7 @@ public class Compra {
         if (subtotal == null) subtotal = BigDecimal.ZERO;
         if (totalImpuestos == null) totalImpuestos = BigDecimal.ZERO;
         if (total == null) total = BigDecimal.ZERO;
+        if (formaPago == null) formaPago = "1";
+
     }
 }

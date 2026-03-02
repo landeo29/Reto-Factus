@@ -6,9 +6,13 @@ import com.factus.factus_system.core.entity.VentaDetalle;
 import com.factus.factus_system.core.repository.UsuarioRepository;
 import com.factus.factus_system.core.repository.VentaRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.factus.factus_system.core.entity.CuentaPorCobrar;
+import com.factus.factus_system.core.repository.CuentaPorCobrarRepository;
+import java.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +24,7 @@ public class VentaService {
     private final VentaRepository ventaRepository;
     private final ProductoService productoService;
     private final UsuarioRepository usuarioRepository;
+    private final CuentaPorCobrarRepository cuentaPorCobrarRepository;
 
     public List<Venta> listarTodas() {
         return ventaRepository.findAll();
@@ -44,7 +49,7 @@ public class VentaService {
     }
 
     @Transactional
-    public Venta crear(Venta venta) {
+    public Venta crear(@NonNull Venta venta) {
         Long count = ventaRepository.count() + 1;
         venta.setNumeroVenta("VTA-" + String.format("%06d", count));
 
@@ -89,7 +94,24 @@ public class VentaService {
         venta.setTotalDescuentos(totalDescuentos);
         venta.setTotal(subtotal.subtract(totalDescuentos).add(totalImpuestos));
 
-        return ventaRepository.save(venta);
+        Venta ventaGuardada = ventaRepository.save(venta);
+
+
+        if ("2".equals(ventaGuardada.getFormaPago())) {
+            CuentaPorCobrar cuenta = new CuentaPorCobrar();
+            cuenta.setVenta(ventaGuardada);
+            cuenta.setCliente(ventaGuardada.getCliente());
+            cuenta.setMonto(ventaGuardada.getTotal());
+            cuenta.setMontoPagado(BigDecimal.ZERO);
+            cuenta.setSaldo(ventaGuardada.getTotal());
+            cuenta.setFechaVencimiento(LocalDate.now().plusDays(30));
+            cuenta.setEstado("PENDIENTE");
+            cuentaPorCobrarRepository.save(cuenta);
+        }
+
+        return ventaGuardada;
+
+
     }
 
     @Transactional
