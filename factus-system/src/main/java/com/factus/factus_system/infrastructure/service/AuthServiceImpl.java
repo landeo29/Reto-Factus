@@ -21,7 +21,6 @@ public class AuthServiceImpl implements IAuthService {
     private final WebClient webClient;
     private final FactusProperties properties;
 
-    // Guardamos el token en memoria para reutilizarlo
     private String currentAccessToken;
     private String currentRefreshToken;
 

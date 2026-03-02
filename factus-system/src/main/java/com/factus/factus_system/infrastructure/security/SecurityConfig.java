@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
 
                         .requestMatchers("/api/erp/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/api/erp/roles/**").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.GET, "/api/erp/clientes/**").hasAnyRole("ADMIN", "VENDEDOR", "CONTADOR")
                         .requestMatchers("/api/erp/clientes/**").hasAnyRole("ADMIN", "VENDEDOR")

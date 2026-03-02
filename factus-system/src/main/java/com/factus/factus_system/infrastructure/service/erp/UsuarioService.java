@@ -3,6 +3,7 @@ package com.factus.factus_system.infrastructure.service.erp;
 import com.factus.factus_system.core.entity.Usuario;
 import com.factus.factus_system.core.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
@@ -31,9 +33,11 @@ public class UsuarioService {
         if (usuarioRepository.existsByUsername(usuario.getUsername())) {
             throw new RuntimeException("Username ya existe: " + usuario.getUsername());
         }
-        if (usuarioRepository.existsByEmail(usuario.getEmail())) {
+        if (usuario.getEmail() != null && !usuario.getEmail().isEmpty()
+                && usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new RuntimeException("Email ya existe: " + usuario.getEmail());
         }
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);
     }
 
@@ -44,6 +48,11 @@ public class UsuarioService {
         usuario.setTelefono(datos.getTelefono());
         usuario.setActivo(datos.getActivo());
         usuario.setRol(datos.getRol());
+
+        if (datos.getPassword() != null && !datos.getPassword().isEmpty()) {
+            usuario.setPassword(passwordEncoder.encode(datos.getPassword()));
+        }
+
         return usuarioRepository.save(usuario);
     }
 
