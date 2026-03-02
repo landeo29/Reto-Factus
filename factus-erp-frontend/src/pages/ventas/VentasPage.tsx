@@ -48,6 +48,8 @@ export default function VentasPage() {
     const [notas, setNotas] = useState('');
     const [items, setItems] = useState<ItemForm[]>([]);
     const [facturando, setFacturando] = useState<number | null>(null);
+    const [formaPago, setFormaPago] = useState('1');
+
 
     useEffect(() => { loadData(); }, []);
 
@@ -105,8 +107,8 @@ export default function VentasPage() {
         try {
             const body = {
                 cliente: { id: Number(clienteId) },
-                usuario: { id: 1 },
                 codigoMetodoPago,
+                formaPago,
                 notas,
                 detalles: items.map(it => ({
                     producto: { id: Number(it.productoId) },
@@ -141,6 +143,10 @@ export default function VentasPage() {
                 referenceCode: venta.numeroVenta,
                 observation: venta.notas || '',
                 paymentMethodCode: venta.codigoMetodoPago,
+                paymentForm: {
+                    paymentFormId: Number(venta.formaPago) || 1,
+                    paymentMethodId: Number(venta.codigoMetodoPago) || 10,
+                },
                 customer: {
                     identificationDocumentId: { CC: '3', NIT: '6', CE: '5', PP: '7', TI: '2' }[cliente.tipoIdentificacion] || '3',
                     identification: cliente.numeroIdentificacion,
@@ -169,12 +175,12 @@ export default function VentasPage() {
             };
 
             const res = await api.post('/invoices', body);
-            const facturaData = res.data.data;
+            const bill = res.data.data?.data?.bill;
 
-            if (facturaData) {
-                const numero = facturaData.bill?.number || facturaData.number || '';
-                const cufe = facturaData.bill?.cufe || facturaData.cufe || '';
-                const qr = facturaData.bill?.qr_image || facturaData.qr_image || '';
+            if (bill) {
+                const numero = bill.number || '';
+                const cufe = bill.cufe || '';
+                const qr = bill.qr || '';
 
                 await api.put(`/erp/ventas/${venta.id}/facturar`, {
                     numeroFactura: numero,
@@ -199,6 +205,7 @@ export default function VentasPage() {
         setNotas('');
         setItems([]);
         setShowModal(true);
+        setFormaPago('1');
     };
 
     const closeModal = () => { setShowModal(false); };
@@ -327,7 +334,7 @@ export default function VentasPage() {
                     <div className="p-6 space-y-5">
                         <div>
                             <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Datos Generales</p>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-3 gap-3">
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">Cliente</label>
                                     <select value={clienteId} onChange={e => setClienteId(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all" required>
@@ -340,8 +347,21 @@ export default function VentasPage() {
                                     <select value={codigoMetodoPago} onChange={e => setCodigoMetodoPago(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all">
                                         <option value="10">Efectivo</option>
                                         <option value="47">Transferencia</option>
+                                        <option value="42">Consignación</option>
+                                        <option value="20">Cheque</option>
                                         <option value="48">Tarjeta Crédito</option>
                                         <option value="49">Tarjeta Débito</option>
+                                        <option value="71">Bonos</option>
+                                        <option value="72">Vales</option>
+                                        <option value="1">No definido</option>
+                                        <option value="ZZZ">Otro</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Forma de Pago</label>
+                                    <select value={formaPago} onChange={e => setFormaPago(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all">
+                                        <option value="1">Contado</option>
+                                        <option value="2">Crédito (30 días)</option>
                                     </select>
                                 </div>
                             </div>

@@ -10,6 +10,9 @@ import CategoriasPage from './pages/categorias/CategoriasPage';
 import ProductosPage from './pages/productos/ProductosPage';
 import VentasPage from './pages/ventas/VentasPage';
 import ComprasPage from './pages/compras/ComprasPage';
+import CuentasPage from './pages/cuentas/CuentasPage';
+import FacturasPage from './pages/facturas/FacturasPage';
+import ReportesPage from './pages/reportes/ReportesPage';
 
 
 function App() {
@@ -27,6 +30,9 @@ function App() {
                         <Route path="/productos" element={<ProductosPage />} />
                         <Route path="/ventas" element={<VentasPage />} />
                         <Route path="/compras" element={<ComprasPage />} />
+                        <Route path="/cuentas" element={<CuentasPage />} />
+                        <Route path="/facturas" element={<FacturasPage />} />
+                        <Route path="/reportes" element={<ReportesPage />} />
 
                     </Route>
                     <Route path="*" element={<Navigate to="/" />} />

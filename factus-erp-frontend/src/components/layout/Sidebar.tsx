@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { BanknotesIcon } from '@heroicons/react/24/outline';
 import {
     Squares2X2Icon,
     UserGroupIcon,
@@ -29,6 +30,7 @@ const menu = [
     { label: 'OPERACIONES', items: [
             { name: 'Ventas', path: '/ventas', icon: ShoppingCartIcon },
             { name: 'Compras', path: '/compras', icon: BuildingStorefrontIcon },
+            { name: 'Cuentas', path: '/cuentas', icon: BanknotesIcon },
         ]},
     { label: 'FACTURACIÓN', items: [
             { name: 'Facturas DIAN', path: '/facturas', icon: DocumentTextIcon },

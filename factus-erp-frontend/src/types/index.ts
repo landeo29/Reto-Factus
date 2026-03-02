@@ -97,6 +97,8 @@ export interface Venta {
     detalles: VentaDetalle[];
     notas: string;
     creadoEn: string;
+    formaPago: string;
+
 }
 
 export interface ApiResponse<T> {
@@ -135,5 +137,31 @@ export interface Compra {
     estado: string;
     detalles: CompraDetalle[];
     notas: string;
+    creadoEn: string;
+    formaPago: string;
+
+}
+
+export interface CuentaPorCobrar {
+    id: number;
+    venta: Venta;
+    cliente: Cliente;
+    monto: number;
+    montoPagado: number;
+    saldo: number;
+    fechaVencimiento: string;
+    estado: string;
+    creadoEn: string;
+}
+
+export interface CuentaPorPagar {
+    id: number;
+    compra: Compra;
+    proveedor: Proveedor;
+    monto: number;
+    montoPagado: number;
+    saldo: number;
+    fechaVencimiento: string;
+    estado: string;
     creadoEn: string;
 }

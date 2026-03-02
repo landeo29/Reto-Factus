@@ -45,6 +45,7 @@ export default function ComprasPage() {
     const [numeroFacturaProveedor, setNumeroFacturaProveedor] = useState('');
     const [notas, setNotas] = useState('');
     const [items, setItems] = useState<ItemForm[]>([]);
+    const [formaPago, setFormaPago] = useState('1');
 
     useEffect(() => { loadData(); }, []);
 
@@ -98,6 +99,7 @@ export default function ComprasPage() {
             const body = {
                 proveedor: { id: Number(proveedorId) },
                 numeroFacturaProveedor,
+                formaPago,
                 notas,
                 detalles: items.map(it => ({
                     producto: { id: Number(it.productoId) },
@@ -134,6 +136,7 @@ export default function ComprasPage() {
         setNotas('');
         setItems([]);
         setShowModal(true);
+        setFormaPago('1');
     };
 
     const closeModal = () => { setShowModal(false); };
@@ -238,7 +241,6 @@ export default function ComprasPage() {
                 </div>
             </div>
 
-            {/* Modal Nueva Compra */}
             <Modal open={showModal} onClose={closeModal} wide>
                 <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/80">
                     <div>
@@ -254,7 +256,7 @@ export default function ComprasPage() {
                     <div className="p-6 space-y-5">
                         <div>
                             <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Datos Generales</p>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-3 gap-3">
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">Proveedor</label>
                                     <select value={proveedorId} onChange={e => setProveedorId(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all" required>
@@ -265,6 +267,13 @@ export default function ComprasPage() {
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">N° Factura Proveedor</label>
                                     <input type="text" value={numeroFacturaProveedor} onChange={e => setNumeroFacturaProveedor(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark placeholder-gray-300 focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all" placeholder="FAC-001 (opcional)" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">Forma de Pago</label>
+                                    <select value={formaPago} onChange={e => setFormaPago(e.target.value)} className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-dark focus:border-primary focus:ring-4 focus:ring-primary-50 outline-none transition-all">
+                                        <option value="1">Contado</option>
+                                        <option value="2">Crédito (30 días)</option>
+                                    </select>
                                 </div>
                             </div>
                             <div className="mt-3">
@@ -357,7 +366,6 @@ export default function ComprasPage() {
                 </form>
             </Modal>
 
-            {/* Modal Detalle */}
             <Modal open={showDetail} onClose={() => setShowDetail(false)} wide>
                 {selectedCompra && (
                     <>
