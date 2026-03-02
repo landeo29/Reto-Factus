@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import api from '../../api/axios';
 import type { Compra, Proveedor, Producto } from '../../types';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+
 import {
     PlusIcon,
     MagnifyingGlassIcon,
@@ -46,15 +48,17 @@ export default function ComprasPage() {
     const [notas, setNotas] = useState('');
     const [items, setItems] = useState<ItemForm[]>([]);
     const [formaPago, setFormaPago] = useState('1');
+    const { puede } = useAuth();
+
 
     useEffect(() => { loadData(); }, []);
 
     const loadData = async () => {
         try {
             const [cRes, pRes, prRes] = await Promise.all([
-                api.get('/erp/compras'),
-                api.get('/erp/productos'),
-                api.get('/erp/proveedores'),
+                api.get('/erp/compras').catch(() => ({ data: { data: [] } })),
+                api.get('/erp/productos').catch(() => ({ data: { data: [] } })),
+                api.get('/erp/proveedores').catch(() => ({ data: { data: [] } })),
             ]);
             setCompras(cRes.data.data || []);
             setProductos(pRes.data.data || []);
@@ -168,10 +172,12 @@ export default function ComprasPage() {
                     <h1 className="text-lg font-bold text-dark">Compras</h1>
                     <p className="text-xs text-gray-400 mt-0.5">{compras.length} registros</p>
                 </div>
-                <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
-                    <PlusIcon className="w-4 h-4" />
-                    Nueva Compra
-                </button>
+                {puede('compras', 'crear') && (
+                    <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
+                        <PlusIcon className="w-4 h-4" />
+                        Nueva Compra
+                    </button>
+                )}
             </div>
 
             <div className="card p-4 mb-5">
@@ -226,7 +232,7 @@ export default function ComprasPage() {
                                             <button onClick={() => openDetail(c)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-primary transition-colors" title="Ver detalle">
                                                 <EyeIcon className="w-4 h-4" />
                                             </button>
-                                            {c.estado === 'PENDIENTE' && (
+                                            {c.estado === 'PENDIENTE' && puede('compras', 'editar') && (
                                                 <button onClick={() => marcarRecibida(c.id)} className="p-2 rounded-lg hover:bg-success-50 text-gray-400 hover:text-success transition-colors" title="Marcar recibida">
                                                     <CheckCircleIcon className="w-4 h-4" />
                                                 </button>

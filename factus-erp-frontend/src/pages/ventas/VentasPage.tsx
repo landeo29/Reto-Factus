@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import api from '../../api/axios';
 import type { Venta, Cliente, Producto } from '../../types';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+
 import {
     PlusIcon,
     MagnifyingGlassIcon,
@@ -49,6 +51,7 @@ export default function VentasPage() {
     const [items, setItems] = useState<ItemForm[]>([]);
     const [facturando, setFacturando] = useState<number | null>(null);
     const [formaPago, setFormaPago] = useState('1');
+    const { puede } = useAuth();
 
 
     useEffect(() => { loadData(); }, []);
@@ -56,9 +59,9 @@ export default function VentasPage() {
     const loadData = async () => {
         try {
             const [vRes, cRes, pRes] = await Promise.all([
-                api.get('/erp/ventas'),
-                api.get('/erp/clientes'),
-                api.get('/erp/productos'),
+                api.get('/erp/ventas').catch(() => ({ data: { data: [] } })),
+                api.get('/erp/clientes').catch(() => ({ data: { data: [] } })),
+                api.get('/erp/productos').catch(() => ({ data: { data: [] } })),
             ]);
             setVentas(vRes.data.data || []);
             setClientes(cRes.data.data || []);
@@ -237,10 +240,12 @@ export default function VentasPage() {
                     <h1 className="text-lg font-bold text-dark">Ventas</h1>
                     <p className="text-xs text-gray-400 mt-0.5">{ventas.length} registros</p>
                 </div>
-                <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
-                    <PlusIcon className="w-4 h-4" />
-                    Nueva Venta
-                </button>
+                {puede('ventas', 'crear') && (
+                    <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
+                        <PlusIcon className="w-4 h-4" />
+                        Nueva Venta
+                    </button>
+                )}
             </div>
 
             <div className="card p-4 mb-5">
@@ -295,7 +300,7 @@ export default function VentasPage() {
                                             <button onClick={() => openDetail(v)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-primary transition-colors" title="Ver detalle">
                                                 <EyeIcon className="w-4 h-4" />
                                             </button>
-                                            {v.estado === 'PENDIENTE' && (
+                                            {v.estado === 'PENDIENTE' && puede('ventas', 'editar') && (
                                                 <button onClick={() => facturarDIAN(v)} disabled={facturando === v.id} className="p-2 rounded-lg hover:bg-success-50 text-gray-400 hover:text-success transition-colors disabled:opacity-50" title="Facturar DIAN">
                                                     {facturando === v.id ? (
                                                         <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>

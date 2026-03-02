@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../../api/axios';
 import type { Venta } from '../../types';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 import {
     MagnifyingGlassIcon,
     DocumentTextIcon,
@@ -18,6 +19,8 @@ export default function FacturasPage() {
     const [search, setSearch] = useState('');
     const [enviando, setEnviando] = useState<number | null>(null);
     const [descargando, setDescargando] = useState<string | null>(null);
+    const { puede } = useAuth();
+
 
     useEffect(() => { loadFacturas(); }, []);
 
@@ -249,18 +252,20 @@ export default function FacturasPage() {
                                                 <CodeBracketIcon className="w-4 h-4" />
                                             </button>
 
-                                            <button
-                                                onClick={() => enviarEmail(v.id, v.numeroFactura, v.cliente?.email || '')}
-                                                disabled={!v.numeroFactura || enviando === v.id}
-                                                className="p-1.5 rounded-lg hover:bg-success-50 text-gray-400 hover:text-success transition-colors disabled:opacity-30"
-                                                title={`Enviar a ${v.cliente?.email || 'sin email'}`}
-                                            >
-                                                {enviando === v.id ? (
-                                                    <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                                                ) : (
-                                                    <EnvelopeIcon className="w-4 h-4" />
-                                                )}
-                                            </button>
+                                            {(puede('ventas', 'crear')) && (
+                                                <button
+                                                    onClick={() => enviarEmail(v.id, v.numeroFactura, v.cliente?.email || '')}
+                                                    disabled={!v.numeroFactura || enviando === v.id}
+                                                    className="p-1.5 rounded-lg hover:bg-success-50 text-gray-400 hover:text-success transition-colors disabled:opacity-30"
+                                                    title={`Enviar a ${v.cliente?.email || 'sin email'}`}
+                                                >
+                                                    {enviando === v.id ? (
+                                                        <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                                    ) : (
+                                                        <EnvelopeIcon className="w-4 h-4" />
+                                                    )}
+                                                </button>
+                                            )}
 
                                             <button
                                                 onClick={() => copiarCUFE(v.cufe)}

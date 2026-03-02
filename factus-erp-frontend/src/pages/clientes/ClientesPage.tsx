@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import api from '../../api/axios';
 import type { Cliente } from '../../types';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+
 import {
     PlusIcon,
     MagnifyingGlassIcon,
@@ -28,6 +30,7 @@ export default function ClientesPage() {
     const [clientes, setClientes] = useState<Cliente[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const { puede } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [editing, setEditing] = useState<Cliente | null>(null);
     const [form, setForm] = useState({
@@ -117,10 +120,12 @@ export default function ClientesPage() {
                     <h1 className="text-lg font-bold text-dark">Clientes</h1>
                     <p className="text-xs text-gray-400 mt-0.5">{clientes.length} registros</p>
                 </div>
-                <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
-                    <PlusIcon className="w-4 h-4" />
-                    Nuevo Cliente
-                </button>
+                {puede('clientes', 'crear') && (
+                    <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
+                        <PlusIcon className="w-4 h-4" />
+                        Nuevo Cliente
+                    </button>
+                )}
             </div>
 
             <div className="card p-4 mb-5">
@@ -177,12 +182,20 @@ export default function ClientesPage() {
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center justify-end gap-1">
-                                            <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-primary transition-colors">
-                                                <PencilSquareIcon className="w-4 h-4" />
-                                            </button>
-                                            <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg hover:bg-danger-50 text-gray-400 hover:text-danger transition-colors">
-                                                <TrashIcon className="w-4 h-4" />
-                                            </button>
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center justify-end gap-1">
+                                                    {puede('clientes', 'editar') && (
+                                                        <button onClick={() => openEdit(c)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-primary transition-colors">
+                                                            <PencilSquareIcon className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                    {puede('clientes', 'eliminar') && (
+                                                        <button onClick={() => handleDelete(c.id)} className="p-2 rounded-lg hover:bg-danger-50 text-gray-400 hover:text-danger transition-colors">
+                                                            <TrashIcon className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
                                         </div>
                                     </td>
                                 </tr>

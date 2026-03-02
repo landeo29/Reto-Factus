@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import MainLayout from './components/layout/MainLayout';
 import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
@@ -13,7 +13,13 @@ import ComprasPage from './pages/compras/ComprasPage';
 import CuentasPage from './pages/cuentas/CuentasPage';
 import FacturasPage from './pages/facturas/FacturasPage';
 import ReportesPage from './pages/reportes/ReportesPage';
+import UsuariosPage from './pages/usuarios/UsuariosPage';
 
+function ProtectedRoute({ modulo, children }: { modulo: string; children: React.ReactNode }) {
+    const { puede } = useAuth();
+    if (!puede(modulo, 'ver')) return <Navigate to="/" replace />;
+    return <>{children}</>;
+}
 
 function App() {
     return (
@@ -24,16 +30,16 @@ function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<DashboardPage />} />
-                        <Route path="/clientes" element={<ClientesPage />} />
-                        <Route path="/proveedores" element={<ProveedoresPage />} />
-                        <Route path="/categorias" element={<CategoriasPage />} />
-                        <Route path="/productos" element={<ProductosPage />} />
-                        <Route path="/ventas" element={<VentasPage />} />
-                        <Route path="/compras" element={<ComprasPage />} />
-                        <Route path="/cuentas" element={<CuentasPage />} />
-                        <Route path="/facturas" element={<FacturasPage />} />
-                        <Route path="/reportes" element={<ReportesPage />} />
-
+                        <Route path="/clientes" element={<ProtectedRoute modulo="clientes"><ClientesPage /></ProtectedRoute>} />
+                        <Route path="/proveedores" element={<ProtectedRoute modulo="proveedores"><ProveedoresPage /></ProtectedRoute>} />
+                        <Route path="/categorias" element={<ProtectedRoute modulo="categorias"><CategoriasPage /></ProtectedRoute>} />
+                        <Route path="/productos" element={<ProtectedRoute modulo="productos"><ProductosPage /></ProtectedRoute>} />
+                        <Route path="/ventas" element={<ProtectedRoute modulo="ventas"><VentasPage /></ProtectedRoute>} />
+                        <Route path="/compras" element={<ProtectedRoute modulo="compras"><ComprasPage /></ProtectedRoute>} />
+                        <Route path="/cuentas" element={<ProtectedRoute modulo="cuentas"><CuentasPage /></ProtectedRoute>} />
+                        <Route path="/facturas" element={<ProtectedRoute modulo="facturas"><FacturasPage /></ProtectedRoute>} />
+                        <Route path="/reportes" element={<ProtectedRoute modulo="reportes"><ReportesPage /></ProtectedRoute>} />
+                        <Route path="/usuarios" element={<ProtectedRoute modulo="usuarios"><UsuariosPage /></ProtectedRoute>} />
                     </Route>
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>

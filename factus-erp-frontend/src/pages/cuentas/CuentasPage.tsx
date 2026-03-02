@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import api from '../../api/axios';
 import type { CuentaPorCobrar, CuentaPorPagar } from '../../types';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+
 import {
     MagnifyingGlassIcon,
     BanknotesIcon,
@@ -33,6 +35,8 @@ export default function CuentasPage() {
     const [pagoId, setPagoId] = useState<number | null>(null);
     const [pagoMonto, setPagoMonto] = useState('');
     const [pagoSaldo, setPagoSaldo] = useState(0);
+    const { puede } = useAuth();
+
 
     useEffect(() => { loadData(); }, []);
 
@@ -220,7 +224,7 @@ export default function CuentasPage() {
                                         </td>
                                         <td className="px-5 py-3.5">
                                             <div className="flex items-center justify-end">
-                                                {c.estado !== 'PAGADA' && (
+                                                {c.estado !== 'PAGADA' && puede('cuentas', 'editar') && (
                                                     <button onClick={() => openPago('cobrar', c.id, c.saldo)} className="p-2 rounded-lg hover:bg-success-50 text-gray-400 hover:text-success transition-colors" title="Registrar cobro">
                                                         <BanknotesIcon className="w-4 h-4" />
                                                     </button>
@@ -286,7 +290,7 @@ export default function CuentasPage() {
                                         </td>
                                         <td className="px-5 py-3.5">
                                             <div className="flex items-center justify-end">
-                                                {c.estado !== 'PAGADA' && (
+                                                {c.estado !== 'PAGADA' && puede('cuentas', 'editar') && (
                                                     <button onClick={() => openPago('pagar', c.id, c.saldo)} className="p-2 rounded-lg hover:bg-danger-50 text-gray-400 hover:text-danger transition-colors" title="Registrar pago">
                                                         <BanknotesIcon className="w-4 h-4" />
                                                     </button>

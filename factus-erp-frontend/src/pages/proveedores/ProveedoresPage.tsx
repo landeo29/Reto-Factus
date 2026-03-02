@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import api from '../../api/axios';
 import type { Proveedor } from '../../types';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
+
 import {
     PlusIcon,
     MagnifyingGlassIcon,
@@ -29,6 +31,7 @@ export default function ProveedoresPage() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const { puede } = useAuth();
     const [editing, setEditing] = useState<Proveedor | null>(null);
     const [form, setForm] = useState({
         tipoIdentificacion: 'NIT',
@@ -113,10 +116,12 @@ export default function ProveedoresPage() {
                     <h1 className="text-lg font-bold text-dark">Proveedores</h1>
                     <p className="text-xs text-gray-400 mt-0.5">{proveedores.length} registros</p>
                 </div>
-                <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
-                    <PlusIcon className="w-4 h-4" />
-                    Nuevo Proveedor
-                </button>
+                {puede('proveedores', 'crear') && (
+                    <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25 transition-all active:scale-[0.98]">
+                        <PlusIcon className="w-4 h-4" />
+                        Nuevo Proveedor
+                    </button>
+                )}
             </div>
 
             <div className="card p-4 mb-5">
@@ -173,12 +178,16 @@ export default function ProveedoresPage() {
                                     </td>
                                     <td className="px-5 py-3.5">
                                         <div className="flex items-center justify-end gap-1">
-                                            <button onClick={() => openEdit(p)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-primary transition-colors">
-                                                <PencilSquareIcon className="w-4 h-4" />
-                                            </button>
-                                            <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg hover:bg-danger-50 text-gray-400 hover:text-danger transition-colors">
-                                                <TrashIcon className="w-4 h-4" />
-                                            </button>
+                                            {puede('proveedores', 'editar') && (
+                                                <button onClick={() => openEdit(p)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-primary transition-colors">
+                                                    <PencilSquareIcon className="w-4 h-4" />
+                                                </button>
+                                            )}
+                                            {puede('proveedores', 'eliminar') && (
+                                                <button onClick={() => handleDelete(p.id)} className="p-2 rounded-lg hover:bg-danger-50 text-gray-400 hover:text-danger transition-colors">
+                                                    <TrashIcon className="w-4 h-4" />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

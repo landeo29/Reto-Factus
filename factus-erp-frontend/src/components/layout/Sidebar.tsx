@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { BanknotesIcon } from '@heroicons/react/24/outline';
+import { BanknotesIcon, UsersIcon } from '@heroicons/react/24/outline';
 import {
     Squares2X2Icon,
     UserGroupIcon,
@@ -17,29 +17,40 @@ import {
 
 const menu = [
     { label: 'GENERAL', items: [
-            { name: 'Dashboard', path: '/', icon: Squares2X2Icon },
+            { name: 'Dashboard', path: '/', icon: Squares2X2Icon, modulo: 'dashboard' },
         ]},
     { label: 'DIRECTORIO', items: [
-            { name: 'Clientes', path: '/clientes', icon: UserGroupIcon },
-            { name: 'Proveedores', path: '/proveedores', icon: TruckIcon },
+            { name: 'Clientes', path: '/clientes', icon: UserGroupIcon, modulo: 'clientes' },
+            { name: 'Proveedores', path: '/proveedores', icon: TruckIcon, modulo: 'proveedores' },
         ]},
     { label: 'INVENTARIO', items: [
-            { name: 'Categorías', path: '/categorias', icon: TagIcon },
-            { name: 'Productos', path: '/productos', icon: CubeIcon },
+            { name: 'Categorías', path: '/categorias', icon: TagIcon, modulo: 'categorias' },
+            { name: 'Productos', path: '/productos', icon: CubeIcon, modulo: 'productos' },
         ]},
     { label: 'OPERACIONES', items: [
-            { name: 'Ventas', path: '/ventas', icon: ShoppingCartIcon },
-            { name: 'Compras', path: '/compras', icon: BuildingStorefrontIcon },
-            { name: 'Cuentas', path: '/cuentas', icon: BanknotesIcon },
+            { name: 'Ventas', path: '/ventas', icon: ShoppingCartIcon, modulo: 'ventas' },
+            { name: 'Compras', path: '/compras', icon: BuildingStorefrontIcon, modulo: 'compras' },
+            { name: 'Cuentas', path: '/cuentas', icon: BanknotesIcon, modulo: 'cuentas' },
         ]},
     { label: 'FACTURACIÓN', items: [
-            { name: 'Facturas DIAN', path: '/facturas', icon: DocumentTextIcon },
-            { name: 'Reportes', path: '/reportes', icon: ChartBarIcon },
+            { name: 'Facturas DIAN', path: '/facturas', icon: DocumentTextIcon, modulo: 'facturas' },
+            { name: 'Reportes', path: '/reportes', icon: ChartBarIcon, modulo: 'reportes' },
+        ]},
+    { label: 'SISTEMA', items: [
+            { name: 'Usuarios', path: '/usuarios', icon: UsersIcon, modulo: 'usuarios' },
         ]},
 ];
 
 export default function Sidebar() {
-    const { user, logout } = useAuth();
+    const { user, logout, puede } = useAuth();
+
+    // Filtrar menú por permisos
+    const menuFiltrado = menu
+        .map(group => ({
+            ...group,
+            items: group.items.filter(item => puede(item.modulo, 'ver')),
+        }))
+        .filter(group => group.items.length > 0);
 
     return (
         <aside className="w-[260px] min-h-screen flex flex-col bg-sidebar">
@@ -55,7 +66,6 @@ export default function Sidebar() {
                 </div>
             </div>
 
-
             <div className="px-4 mb-2">
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-dark-light text-gray-500 text-xs">
                     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
@@ -65,7 +75,7 @@ export default function Sidebar() {
             </div>
 
             <nav className="flex-1 px-4 py-2 overflow-y-auto space-y-5">
-                {menu.map((group) => (
+                {menuFiltrado.map((group) => (
                     <div key={group.label}>
                         <p className="text-[10px] font-bold text-gray-600 tracking-[0.15em] px-3 mb-2">{group.label}</p>
                         <div className="space-y-0.5">
